@@ -2,6 +2,310 @@
 <html>
 <head>
     <title>Electrochemical Test Data Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Electrochemical Test Data Analysis - Modern Scientific Interface */
+
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --secondary: #1abc9c;
+            --accent: #e74c3c;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --gray: #95a5a6;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --gradient-bg: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            --font-main: 'Roboto', 'Segoe UI', sans-serif;
+            --font-heading: 'Montserrat', 'Arial', sans-serif;
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        body {
+            font-family: var(--font-main);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            background-color: #f8f9fa;
+            background-image: 
+                radial-gradient(circle at 25px 25px, rgba(52, 152, 219, 0.15) 2%, transparent 0%),
+                radial-gradient(circle at 75px 75px, rgba(52, 152, 219, 0.1) 2%, transparent 0%);
+            background-size: 100px 100px;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            margin-top: 0;
+            color: var(--dark);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 0;
+            padding: 1.5rem 0;
+            color: white;
+            background: var(--gradient-bg);
+            letter-spacing: 0.05em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px;
+        }
+
+        /* Form Container */
+        form {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: white;
+            box-shadow: 0 10px 30px var(--shadow);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        /* Fieldsets & Legends */
+        fieldset {
+            border: none;
+            background: #fff;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+
+        fieldset:hover {
+            box-shadow: 0 8px 15px var(--shadow);
+        }
+
+        legend {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 1.2rem;
+            padding: 0 1rem;
+            color: var(--primary);
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px var(--shadow);
+        }
+
+        /* Input Fields */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin: 0.5rem 0 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: var(--transition);
+            font-family: var(--font-main);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        input[type="file"] {
+            padding: 0.5rem;
+            background: #f8f9fa;
+            border: 1px dashed #ccc;
+        }
+
+        input[type="file"]:hover {
+            background: #eef2f7;
+            border-color: var(--primary);
+        }
+
+        /* Labels */
+        label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        /* Buttons */
+        button, input[type="submit"] {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: var(--font-heading);
+            letter-spacing: 0.03em;
+            transition: var(--transition);
+            box-shadow: 0 2px 5px var(--shadow);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        button:hover, input[type="submit"]:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px var(--shadow);
+        }
+
+        button:active, input[type="submit"]:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 3px var(--shadow);
+        }
+
+        button:focus, input[type="submit"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
+        }
+
+        input[type="submit"] {
+            background: var(--secondary);
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+
+        input[type="submit"]:hover {
+            background: #16a085;
+        }
+
+        input[type="submit"]:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+        }
+
+        /* Progress indicator */
+        #progress {
+            text-align: center;
+            padding: 1rem;
+            background: #f1f9fe;
+            border-left: 4px solid var(--primary);
+            margin: 1rem 0;
+            font-weight: 500;
+            border-radius: 4px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                background-color: #f1f9fe;
+            }
+            50% {
+                background-color: #d4e9f7;
+            }
+            100% {
+                background-color: #f1f9fe;
+            }
+        }
+
+        /* Group styling for electrode and days sections */
+        #electrode_fields, #day_fields {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        #electrode_fields h4, #day_fields h4, #file_upload_fields h4 {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+            border-bottom: 1px solid #eaeaea;
+            padding-bottom: 0.5rem;
+        }
+
+        /* File upload styling */
+        #file_upload_fields {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px var(--shadow);
+        }
+
+        #file_upload_fields h3 {
+            margin-top: 0;
+            color: var(--secondary);
+            text-align: center;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            form {
+                padding: 1rem;
+            }
+
+            fieldset {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+                padding: 1rem 0;
+            }
+        }
+
+        /* Animation for focus states */
+        @keyframes focusGlow {
+            0% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(52, 152, 219, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 152, 219, 0); }
+        }
+
+        /* Tooltip styling */
+        label[title] {
+            cursor: help;
+            border-bottom: 1px dotted var(--gray);
+            display: inline-block;
+        }
+
+        /* Success/error messages */
+        .message {
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #e8f8f5;
+            color: #16a085;
+            border-left: 4px solid var(--success);
+        }
+
+        .message.error {
+            background: #fdedec;
+            color: #c0392b;
+            border-left: 4px solid var(--accent);
+        }
+    </style>
     <script>
         function generateFields() {
             var numElectrodes = document.getElementById("num_electrodes").value;
@@ -35,7 +339,7 @@
                 var dayVal = dayInput ? dayInput.value : j;
                 dayValues.push(dayVal);
             }
-            var fileDiv = document.getElementById("file_upload_fields");
+            var fileDiv = document.getElementById("file_upload_fields");T
             fileDiv.innerHTML = "<h3>Upload Excel File (.csv or .xlsx) for each Electrode and Day</h3>";
             // Group by day: list electrode file inputs using the actual electrode numbers
             for (var d = 0; d < dayValues.length; d++) {
