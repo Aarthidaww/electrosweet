@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Electrochemical Test Data Analysis</title>
+    <script>
+        function generateFields() {
+            var numElectrodes = document.getElementById("num_electrodes").value;
+            var electrodesDiv = document.getElementById("electrode_fields");
+            electrodesDiv.innerHTML = "";
+            for (var i = 1; i <= numElectrodes; i++) {
+                electrodesDiv.innerHTML += "<h4>Electrode " + i + " Info:</h4>" +
+                    "Electrode Number: <input type='number' name='electrode_number_" + i + "' required><br>" +
+                    "Casted With: <input type='text' name='electrode_cast_" + i + "' required><br><br>";
+            }
+            var numDays = document.getElementById("num_days").value;
+            var daysDiv = document.getElementById("day_fields");
+            daysDiv.innerHTML = "";
+            for (var j = 1; j <= numDays; j++) {
+                daysDiv.innerHTML += "Day " + j + ": <input type='text' name='day_" + j + "' required><br>";
+            }
+        }
+        
+        function generateFileUploads() {
+            var numElectrodes = document.getElementById("num_electrodes").value;
+            var electrodeNumbers = [];
+            for (var i = 1; i <= numElectrodes; i++) {
+                var elecInput = document.getElementsByName("electrode_number_" + i)[0];
+                var elecNum = elecInput ? elecInput.value : i;
+                electrodeNumbers.push(elecNum);
+            }
+            var numDays = document.getElementById("num_days").value;
+            var dayValues = [];
+            for (var j = 1; j <= numDays; j++) {
+                var dayInput = document.getElementsByName("day_" + j)[0];
+                var dayVal = dayInput ? dayInput.value : j;
+                dayValues.push(dayVal);
+            }
+            var fileDiv = document.getElementById("file_upload_fields");
+            fileDiv.innerHTML = "<h3>Upload Excel File (.csv or .xlsx) for each Electrode and Day</h3>";
+            // Group by day: list electrode file inputs using the actual electrode numbers
+            for (var d = 0; d < dayValues.length; d++) {
+                fileDiv.innerHTML += "<h4>Day " + dayValues[d] + ":</h4>";
+                for (var e = 0; e < electrodeNumbers.length; e++) {
+                    fileDiv.innerHTML += "Electrode " + electrodeNumbers[e] + " Day " + dayValues[d] + ": <input type='file' name='file_" + electrodeNumbers[e] + "_" + dayValues[d] + "' accept='.csv,.xlsx' required><br>";
+                }
+                fileDiv.innerHTML += "<br>";
+            }
+        }
+        
+        // Progress indicator on form submission.
+        function showProgress() {
+            document.getElementById("submit_btn").disabled = true;
+            document.getElementById("progress").style.display = "block";
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <h1>Electrochemical Test Data Analysis</h1>
+    <form method="POST" enctype="multipart/form-data" onsubmit="return showProgress();">
+        <fieldset>
+            <legend>Electrode and Testing Info</legend>
+            <label>How many electrodes to process:</label>
+            <input type="number" id="num_electrodes" name="num_electrodes" value="1" min="1" required><br><br>
+            <div id="electrode_fields"></div>
+            <br>
+            <label>How many days of testing to process:</label>
+            <input type="number" id="num_days" name="num_days" value="1" min="1" required><br><br>
+            <div id="day_fields"></div>
+            <br>
+            <button type="button" onclick="generateFields()">Generate Electrode/Day Fields</button>
+            <br><br>
+            <button type="button" onclick="generateFileUploads()">Generate File Upload Fields</button>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>Glucose and Timing Parameters</legend>
+            <label>Time delay between adding glucose drops across consecutive electrodes (s):</label>
+            <input type="number" name="time_delay" value="4" step="0.1" required><br><br>
+            
+            <label>Volume of Glucose Solution 1 (uL):</label>
+            <input type="number" name="vol_glu1" value="2" step="0.1" required><br><br>
+            
+            <label>Concentration of Glucose Solution 1 (mM):</label>
+            <input type="number" name="conc_glu1" value="1" step="0.1" required><br><br>
+            
+            <label>Time point when Glucose Solution 1 is first added to the first electrode (s):</label>
+            <input type="number" name="time_glu1" value="1000" required><br><br>
+            
+            <label>Volume of Glucose Solution 2 (uL):</label>
+            <input type="number" name="vol_glu2" value="2" step="0.1" required><br><br>
+            
+            <label>Concentration of Glucose Solution 2 (mM):</label>
+            <input type="number" name="conc_glu2" value="10" step="0.1" required><br><br>
+            
+            <label>Time point when Glucose Solution 2 is first added to the first electrode (s):</label>
+            <input type="number" name="time_glu2" value="2000" required><br><br>
+            
+            <label>Time interval between adding glucose drops for the same electrode (s):</label>
+            <input type="number" name="drop_interval" value="100" required><br><br>
+            
+            <label>Number of drops of Glucose Solution 1 added:</label>
+            <input type="number" name="num_drops_glu1" value="10" required><br><br>
+            
+            <label>Number of drops of Glucose Solution 2 added:</label>
+            <input type="number" name="num_drops_glu2" value="10" required><br><br>
+            
+            <label>Volume of Artificial Sweat added (uL):</label>
+            <input type="number" name="vol_sweat" value="50" step="0.1" required><br><br>
+        </fieldset>
+        <br>
+        <fieldset>
+            <legend>Graph Customization (for Raw Data Graph)</legend>
+            <label>X-axis Minimum (optional):</label>
+            <input type="text" name="x_min" placeholder="Optional"><br><br>
+            <label>X-axis Maximum (optional):</label>
+            <input type="text" name="x_max" placeholder="Optional"><br><br>
+            <label>Y-axis Minimum (optional):</label>
+            <input type="text" name="y_min" placeholder="Optional"><br><br>
+            <label>Y-axis Maximum (optional):</label>
+            <input type="text" name="y_max" placeholder="Optional"><br><br>
+        </fieldset>
+        <br>
+        <div id="file_upload_fields"></div>
+        <br>
+        <div id="progress" style="display:none;">Processing... Please wait.</div>
+        <br>
+        <input type="submit" id="submit_btn" value="Submit and Generate Graphs">
+    </form>
+</body>
+</html>

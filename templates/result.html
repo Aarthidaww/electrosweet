@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Electrochemical Test Sensitivity Results</title>
+    <style>
+      .container { display: flex; flex-wrap: wrap; }
+      .section { flex: 1 1 30%; margin: 10px; }
+      table.data { border-collapse: collapse; width: 100%; }
+      table.data th, table.data td { border: 1px solid #ddd; padding: 8px; }
+      table.small-data { font-size: 10px; margin-top: 5px; }
+      h1, h2, h3, h4 { margin-top: 20px; }
+      .top-buttons { position: fixed; top: 10px; right: 10px; z-index: 1000; }
+      .top-buttons button { margin-left: 10px; }
+      .download-link { font-size: 12px; margin-top: 5px; display: block; }
+    </style>
+</head>
+<body>
+    {% set downloads = downloads | default({}) %}
+    <div class="top-buttons">
+      <button onclick="window.print();">Print PDF Report</button>
+      <a href="{{ url_for('download_file', filename=downloads.combined_excel) }}">
+          <button>Download Excel File (with Embedded Graphs) for Summary of Electrochemical Sensitivity of Samples</button>
+      </a>
+      <a href="{{ url_for('download_file', filename=downloads.combined_indiv_excel) }}">
+          <button>Download Excel File (with Embedded Graphs) for Summary of Individual Electrode Electrochemical Sensitivity</button>
+      </a>
+      <a href="{{ url_for('download_file', filename=downloads.pvalues_excel) }}">
+          <button>Download Pairwise P-values Excel File</button>
+      </a>
+    </div>
+    
+    <h1>Individual Electrochemical Sensitivity of Electrodes</h1>
+    {{ individual_table_html | safe }}
+    
+    <h2>Aggregated Electrochemical Sensitivity Summary (Averaged by Sample)</h2>
+    {{ aggregated_table_html | safe }}
+    
+    <h2>Standard Deviation in Aggregated Electrochemical Sensitivity Summary</h2>
+    {{ std_table_html | safe }}
+    
+    <h2>Ranking of Samples</h2>
+    {{ ranking_table | safe }}
+    
+    <h3>Pairwise P-values for All Sensitivity Metrics</h3>
+    {% for metric, table in pvalue_tables_html.items() %}
+      <h4>{{ metric }}</h4>
+      {{ table | safe }}
+    {% endfor %}
+    
+    <h2>Graphs of Aggregated Electrochemical Sensitivity of Samples Graphs</h2>
+    
+    <!-- Average Sensitivity Bar Graph -->
+    <div>
+      <h3>Graph of Average Sensitivity Across the Days of Electrodes Casted with Sample</h3>
+      <img src="{{ url_for('static', filename=avg_bar) }}" alt="Average Sensitivity Bar Graph" style="max-width:600px;">
+      <a class="download-link" href="{{ url_for('download_file', filename=avg_bar) }}" download>Download Image</a>
+      <div>
+         {{ aggregated_day_data[days_list[0]] | safe }}
+      </div>
+    </div>
+    
+    <!-- Combined Clustered Bar Graph -->
+    <div>
+      <h3>Combined Clustered Bar Graph for All Samples</h3>
+      <img src="{{ url_for('static', filename=clustered_bar) }}" alt="Combined Clustered Bar Graph" style="max-width:600px;">
+      <a class="download-link" href="{{ url_for('download_file', filename=clustered_bar) }}" download>Download Image</a>
+      <div>
+         <h4>Underlying Data Table</h4>
+         {{ combined_clustered_table | safe }}
+      </div>
+    </div>
+    
+    <!-- Day-specific Bar Graphs -->
+    {% for day, img in day_bar.items() %}
+      <div>
+        <h3>Graph of Sensitivity of Electrodes Casted with Samples on Day {{ day }}</h3>
+        <img src="{{ url_for('static', filename=img) }}" alt="Day {{ day }} Bar Graph" style="max-width:600px;">
+        <a class="download-link" href="{{ url_for('download_file', filename=img) }}" download>Download Image</a>
+        <div>
+          {{ aggregated_day_data[day] | safe }}
+          {{ aggregated_annotation_data[day] | safe }}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <!-- Per-sample Bar Graphs across Days -->
+    <h3>Bar Graph of Sensitivity of Each Sample Across the Days</h3>
+    {% for sample, img in sample_day_bar.items() %}
+      <div>
+        <h4>Graph of Sensitivity of Electrodes Casted with {{ sample }} Across the Days</h4>
+        <img src="{{ url_for('static', filename=img) }}" alt="Sample {{ sample }} across days" style="max-width:600px;">
+        <a class="download-link" href="{{ url_for('download_file', filename=img) }}" download>Download Image</a>
+        <div>
+          {{ sample_day_data[sample] | safe }}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <!-- Scatter Plots per Sample -->
+    <h3>Scatter Plots for Each Sample (with Fitted Trendline)</h3>
+    {% for sample, img in sample_scatter.items() %}
+      <div>
+        <h4>Graph of Sensitivity of Electrodes Casted with {{ sample }} Across the Days (Scatter Plot)</h4>
+        <img src="{{ url_for('static', filename=img) }}" alt="Scatter for {{ sample }}" style="max-width:600px;">
+        <a class="download-link" href="{{ url_for('download_file', filename=img) }}" download>Download Image</a>
+        <div>
+          <h5>Data Points</h5>
+          {{ sample_scatter_tables[sample] | safe }}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <h3>Scatter Plots for Each Sample (Smooth Curve)</h3>
+    {% for sample, img in sample_scatter_smooth.items() %}
+      <div>
+        <h4>Graph of Sensitivity of Electrodes Casted with {{ sample }} Across the Days (Smooth Curve)</h4>
+        <img src="{{ url_for('static', filename=img) }}" alt="Smooth Scatter for {{ sample }}" style="max-width:600px;">
+        <a class="download-link" href="{{ url_for('download_file', filename=img) }}" download>Download Image</a>
+        <div>
+          <h5>Smooth Curve Gradient Values</h5>
+          {{ sample_scatter_smooth_tables[sample] | safe }}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <!-- Combined Scatter Plots -->
+    <div>
+      <h3>Combined Scatter Plot for All Samples</h3>
+      <img src="{{ url_for('static', filename=combined_scatter) }}" alt="Combined Scatter Plot" style="max-width:600px;">
+      <a class="download-link" href="{{ url_for('download_file', filename=combined_scatter) }}" download>Download Image</a>
+      <div>
+         <h5>Data Table for Combined Scatter Plot</h5>
+         {{ combined_scatter_table | safe }}
+      </div>
+    </div>
+    <div>
+      <h3>Combined Scatter Plot for All Samples (Smooth Curve)</h3>
+      <img src="{{ url_for('static', filename=combined_scatter_smooth) }}" alt="Combined Scatter Plot Smooth" style="max-width:600px;">
+      <a class="download-link" href="{{ url_for('download_file', filename=combined_scatter_smooth) }}" download>Download Image</a>
+      <div>
+         <h5>Data Table for Combined Smooth Scatter Plot</h5>
+         {{ combined_scatter_table | safe }}
+      </div>
+    </div>
+    
+    <!-- Individual Electrode-Day Results -->
+    <h2>Results of Electrochemical Sensitivity of Individual Electrodes by Day</h2>
+    {% for key, result in individual_results.items() %}
+      <h3>Results for Electrode {{ result.electrode }} casted with {{ result.sensitivity_text.split('casted with ')[1].split(' on')[0] }} on Day {{ result.day }}</h3>
+      <p>{{ result.trendline_text }}</p>
+      <p>{{ result.sensitivity_text }}</p>
+      <div class="container">
+         <div class="section">
+           <h4>Raw Data Graph</h4>
+           <img src="{{ url_for('static', filename=result.raw_graph) }}" alt="Raw Data Graph" style="max-width:350px;">
+           <a class="download-link" href="{{ url_for('download_file', filename=result.raw_graph) }}" download>Download Image</a>
+         </div>
+         <div class="section">
+           <h4>Raw Data Graph (from 500s)</h4>
+           <img src="{{ url_for('static', filename=result.raw_graph_500) }}" alt="Raw Data 500s Graph" style="max-width:350px;">
+           <a class="download-link" href="{{ url_for('download_file', filename=result.raw_graph_500) }}" download>Download Image</a>
+         </div>
+         <div class="section">
+           <h4>Processed Data Graph</h4>
+           <img src="{{ url_for('static', filename=result.processed_graph) }}" alt="Processed Data Graph" style="max-width:350px;">
+           <a class="download-link" href="{{ url_for('download_file', filename=result.processed_graph) }}" download>Download Image</a>
+         </div>
+      </div>
+      <div>
+         {{ result.table_html | safe }}
+      </div>
+      <p>
+        <a href="{{ url_for('download_file', filename=result.excel_chart) }}" download>
+          Download Excel File (with Embedded Graphs) for Electrochemical Sensitivity of Electrode {{ result.electrode }} casted with {{ result.sensitivity_text.split('casted with ')[1].split(' on')[0] }} on Day {{ result.day }}
+        </a>
+      </p>
+      <hr>
+    {% endfor %}
+</body>
+</html>
